@@ -1,28 +1,7 @@
+
+
 let projects = [];
 let currentProject
-
-function createProject(title) {
-  const project = projectFactory(title);
-  projects.push(project);
-  currentProject = project;
-  displayProject(project);
-}
-
-function displayProject(project) {
-  const container = document.getElementById('project-container');
-  const newProject = document.createElement('div');
-  newProject.classList.add('project-menu-item');
-  newProject.textContent = `${project.title}`
-  container.appendChild(newProject);
-  addProjectListener(newProject, project);
-}
-
-function addProjectListener(node, project) {
-  node.addEventListener('click', () => {
-    currentProject = project;
-    populateTasks();
-  })
-}
 
 const projectFactory = (title) => {
   return ({
@@ -31,14 +10,58 @@ const projectFactory = (title) => {
   })
 }
 
+function createProject(title) {
+  const project = projectFactory(title);
+  projects.push(project);
+  currentProject = project;
+  displayProject(project);
+  selectProject(project);
+  populateTasks();
+}
+
+function displayProject(project) {
+  const container = document.getElementById('project-container');
+  const newProject = document.createElement('div');
+  newProject.setAttribute('id', project.title);
+  newProject.classList.add('project-menu-item');
+  newProject.textContent = `${project.title}`
+  container.appendChild(newProject);
+  addProjectListener(newProject, project);
+}
+
+function selectProject(project) {
+  currentProject = project
+  const selectedProject = document.getElementById(project.title);
+  projects.forEach(project => document.getElementById(project.title).classList.remove('selected-project'));
+  selectedProject.classList.add('selected-project');
+}
+
+function addProjectListener(node, project) {
+  node.addEventListener('click', () => {
+    selectProject(project);
+    populateTasks();
+
+  })
+}
+
+function deleteProject() {
+  projects.splice(projects.findIndex(project => project.title == currentProject.title), 1);
+  const toDelete = document.getElementById(currentProject.title)
+  toDelete.parentNode.removeChild(toDelete);
+  currentProject = projects[0];
+  selectProject(currentProject);
+  populateTasks();
+}
+
 function toggleProjectForm() {
   projectForm = document.getElementById('project-form');
   projectForm.classList.toggle('hidden');
 }
 
-const taskFactory = (title, description, priority) => {
+const taskFactory = (title, date, description, priority) => {
   return ({
     title,
+    date,
     description,
     priority
   })
@@ -55,23 +78,32 @@ function toggleTaskForm() {
   taskForm.classList.toggle('hidden');
 }
 
-function createTask(title, description, priority) {
-  task = taskFactory(title, description, priority);
+function createTask(title, date, description, priority) {
+  const task = taskFactory(title, date, description, priority);
   displayTask(task);
   currentProject.tasks.push(task);
 }
 
 function displayTask(task) {
-  taskList = document.getElementById('task-list');
-  newTask = document.createElement('div');
+  let taskList = document.getElementById('task-list');
+  let newTask = document.createElement('div');
   newTask.classList.add('task');
 
-  newTask.textContent = `Title: ${task.title}, priority: ${task.priority}, description: ${task.description}`;
+  newTask.innerHTML = `${task.title} <br><br> Due Date: ${task.date}<br><br>`;
   taskList.appendChild(newTask);
+
+  const deleteButton = document.createElement('button');
+  deleteButton.textContent = "Delete";
+  deleteButton.classList.add('button');
+  deleteButton.addEventListener('click', (e) => {
+    deleteTask(task);
+
+  })
+  newTask.appendChild(deleteButton);
 }
 
 function populateTasks() {
-  taskList = document.getElementById('task-list');
+  const taskList = document.getElementById('task-list');
   while (taskList.firstChild) {
     taskList.removeChild(taskList.firstChild);
   }
@@ -79,11 +111,17 @@ function populateTasks() {
   currentProject.tasks.forEach(task => displayTask(task));
 }
 
+function deleteTask(task) {
+  index = currentProject.tasks.findIndex(entry => entry.title == task.title)
+  currentProject.tasks.splice(index, 1);
+  populateTasks();
+}
+
 const taskSubmit = document.getElementById('task-submit');
 taskSubmit.addEventListener('click', (e) => {
   e.preventDefault();
   const taskForm = document.getElementById('task-form');
-  createTask(taskForm.title.value, taskForm.description.value, taskForm.priority.value);
+  createTask(taskForm.title.value, taskForm.date.value, taskForm.description.value, taskForm.priority.value);
   taskForm.reset();
   toggleTaskForm()
 });
@@ -101,19 +139,23 @@ projectSubmit.addEventListener('click', (e) => {
   const projectForm = document.getElementById('project-form');
   createProject(projectForm.title.value);
   projectForm.reset();
-  toggleProjectForm()
+  toggleProjectForm();
 });
 
 const projectCancel = document.getElementById('project-cancel');
 projectCancel.addEventListener('click', (e) => {
   e.preventDefault();
   projectForm.reset();
-  toggleProjectForm()
+  toggleProjectForm();
 });
 
 const toggleTask = document.getElementById('new-task')
 toggleTask.addEventListener('click', () => {
-  toggleTaskForm();
+  if (projects.length > 0) {
+    toggleTaskForm();
+  } else {
+    alert("Create a new project first!")
+  }
 });
 
 const newProject = document.getElementById('new-project')
@@ -121,10 +163,15 @@ newProject.addEventListener('click', () => {
   toggleProjectForm();
 });
 
+const deleteProjectButton = document.getElementById('delete-project')
+deleteProjectButton.addEventListener('click', () => {
+  deleteProject();
+});
+
 createProject("project 1");
-createTask("a", "a", "a");
-createTask("b", "b", "b");
+createTask("a", "01-01-01", "a", "a");
+createTask("b", "01-01-01", "b", "b");
 createProject("project 2");
-createTask("c", "c", "c");
-createTask("d", "d", "d");
+createTask("c", "01-01-01", "c", "c");
+createTask("d", "01-01-01", "d", "d");
 populateTasks();
