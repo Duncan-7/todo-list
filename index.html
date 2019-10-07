@@ -15,7 +15,7 @@
     <form id="project-form" class="hidden">
       <h2>New Project</h2>
       <label for="title">Name:</label><br>
-      <input type="text" name="title"><br><br>
+      <input type="text" name="title" required><br><br>
       
       <br><br>
       <input type="submit" class="button accept" id="project-submit" value="Create">
@@ -28,7 +28,7 @@
       <form id="task-form" class="hidden">
         <h2>Add New Task</h2>
         <label for="title">Title:</label><br>
-        <input type="text" name="title"><br><br>
+        <input type="text" name="title" required><br><br>
         <label for="date">Due Date:</label><br>
         <input type="date" name="date"><br><br>
         <label for="description">Description:</label><br>
@@ -51,7 +51,7 @@
       <button id="new-task" class="button">Add Task</button>
       <button id="delete-project" class="button">Delete Project</button>
     </div>
-    <div id="description-container">
+    <div id="details-container">
 
     </div>
   </div>
