@@ -9,6 +9,11 @@ let takenNames = [];
 
 const createTask = (title, description, date, priority) => {
   const form = document.getElementById("task-form");
+  let currentProject = projects.getCurrentProject()
+  if (currentProject == undefined) {
+    alert("Create a project first")
+    return
+  }
   let task
   if (form.title.value == "") {
     task = Task(title, description, date, priority);
@@ -19,7 +24,7 @@ const createTask = (title, description, date, priority) => {
     task = Task(form.title.value, form.description.value, form.date.value, form.priority.value);
   }
   takenNames.push(task.getTitle());
-  let currentProject = projects.getCurrentProject()
+
   currentProject.addTask(task);
 
   const taskList = currentProject.getTasks()
@@ -115,6 +120,7 @@ const initialiseEventListeners = () => {
     projects.deleteProject(currentProject);
     dom.removeElement(currentProject);
     dom.clearContents("task-list");
+    selectProject(projects.getProjects()[0]);
     updateStorage()
   })
 }
