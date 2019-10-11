@@ -9,10 +9,18 @@ const Dom = () => {
     element.textContent = `${project.getTitle()}`;
   }
 
+  const createButton = (type, element) => {
+    const button = document.createElement('button');
+    button.classList.add('button', type);
+    const buttonText = type.charAt(0).toUpperCase() + type.substring(1) + " Task";
+    button.textContent = buttonText;
+    element.appendChild(button);
+  }
+
   //public functions
   const titleForId = (title) => title.split(" ").join("");
 
-  const createElement = (object) => {
+  const createElement = (object, parentObject) => {
     const type = object.getType();
     const title = titleForId(object.getTitle());
     const parent = document.getElementById(`${type}-list`)
@@ -21,13 +29,20 @@ const Dom = () => {
     element.classList.add(`${type}`);
     element.setAttribute('id', `${title}`);
     if (type == "task") {
-      taskContent(object, element)
-      createDeleteButton(element);
+      const taskList = parentObject.getTasks();
+
+      taskContent(object, element);
+      createButton("delete", element);
+      createButton("edit", element);
+      element.classList.add(object.getPriority())
+
+
     } else if (type == "project") {
       projectContent(object, element)
     }
 
     parent.appendChild(element);
+    return element;
   }
 
   const removeElement = (object) => {
@@ -35,13 +50,6 @@ const Dom = () => {
     const element = document.getElementById(objectId);
     const parent = element.parentNode
     parent.removeChild(element);
-  }
-
-  const createDeleteButton = (element) => {
-    const button = document.createElement('button');
-    button.classList.add('button');
-    button.textContent = "Delete Task";
-    element.appendChild(button);
   }
 
   const highlight = (object, objectCollection) => {
@@ -66,8 +74,12 @@ const Dom = () => {
 
   const showTasks = (project) => {
     const tasks = project.getTasks();
-    const taskList = document.getElementById("task-list");
-    tasks.forEach(task => createElement(task));
+    tasks.forEach(task => createElement(task, project));
+  }
+
+  const selectTask = (task, objectCollection) => {
+    highlight(task, objectCollection);
+    showTaskDetails(task);
   }
 
 
@@ -77,6 +89,12 @@ const Dom = () => {
     Due Date: ${task.getDueDate()}<br><br>
     Priority: ${task.getPriority()} <br><br> 
     Description:<br> ${task.getDescription()}<br><br>`)
+  }
+
+  const deleteTask = (task, project) => {
+    project.deleteTask(task);
+    removeElement(task);
+    clearContents("details-container")
   }
 
   const createClickListener = (elementId, callbackFunction, argument) => {
@@ -93,16 +111,34 @@ const Dom = () => {
     form.reset();
   }
 
+  const hideForm = (type) => {
+    const form = document.getElementById(`${type}-form`);
+    form.classList.add("hidden");
+    form.reset();
+  }
+
+  const populateForm = (object) => {
+    const form = document.getElementById("edit-task-form");
+    form.title.value = object.getTitle();
+    form.date.value = object.getDueDate();
+    form.description.value = object.getDescription();
+    form.priority.value = object.getPriority();
+    form.oldtitle.value = object.getTitle();
+  }
+
   return ({
     titleForId,
     createElement,
     removeElement,
-    createDeleteButton,
     clearContents,
     showTasks,
+    selectTask,
     showTaskDetails,
+    deleteTask,
     createClickListener,
     toggleForm,
+    hideForm,
+    populateForm,
     highlight
   })
 }

@@ -12,9 +12,9 @@ const Project = (title) => {
 
   //public functions
   const addTask = (task) => {
-    const tasks = getTasks();
-    tasks.push(task);
-    setTasks(tasks);
+    const taskList = getTasks();
+    taskList.push(task);
+    setTasks(taskList);
   }
 
   const deleteTask = (task) => {

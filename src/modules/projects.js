@@ -1,9 +1,12 @@
 const Projects = () => {
 
+  const type = "projects"
   let currentProject
   let projects = []
 
   // getters and setters
+  const getType = () => type;
+
   const getCurrentProject = () => currentProject;
   const setCurrentProject = (project) => currentProject = project
 
@@ -24,6 +27,7 @@ const Projects = () => {
     setProjects(currentProjects);
   }
   return ({
+    getType,
     getCurrentProject,
     setCurrentProject,
     getProjects,

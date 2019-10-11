@@ -50,6 +50,11 @@ h2 {
 	padding: 5px;
 }
 
+#task-list {
+	display: flex;
+  flex-direction: column;
+}
+
 .task {
 	border: 1px solid black;
 	padding: 5px;
@@ -91,3 +96,17 @@ form {
 	border: 1px solid black;
 }
 
+.high {
+	background-color:rgba(255,0,0,0.3);
+	order: 1;
+}
+
+.medium {
+	background-color:rgba(255,255,0,0.3);
+	order: 2;
+}
+
+.low {
+	background-color:rgba(0,255,0,0.3);
+	order: 3;
+}

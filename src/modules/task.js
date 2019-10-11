@@ -13,6 +13,8 @@ const Task = (title, description, dueDate, priority) => {
   const getPriority = () => priority;
   const setPriority = (newPriority) => priority = newPriority
 
+  //public functions
+
   return ({
     getType,
     getTitle,
