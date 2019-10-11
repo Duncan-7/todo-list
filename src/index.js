@@ -5,15 +5,20 @@ import { Dom } from './modules/dom';
 
 let projects = Projects();
 const dom = Dom();
+let takenNames = [];
 
 const createTask = (title, description, date, priority) => {
   const form = document.getElementById("task-form");
   let task
   if (form.title.value == "") {
     task = Task(title, description, date, priority);
+  } else if (takenNames.includes(form.title.value)) {
+    alert("Please choose a unique title");
+    return
   } else {
     task = Task(form.title.value, form.description.value, form.date.value, form.priority.value);
   }
+  takenNames.push(task.getTitle());
   let currentProject = projects.getCurrentProject()
   currentProject.addTask(task);
 
@@ -29,6 +34,7 @@ const createTask = (title, description, date, priority) => {
 const addTaskListeners = (taskElement, task, currentProject, taskList) => {
   taskElement.addEventListener('click', (e) => {
     if (e.target.classList.value == "button delete") {
+      takenNames = takenNames.filter(name => name != task.getTitle());
       dom.deleteTask(task, currentProject);
       updateStorage();
     } else if (e.target.classList.value == "button edit") {
@@ -54,8 +60,13 @@ const editTask = () => {
 
 const createProject = (title) => {
   const form = document.getElementById("project-form");
+  if (takenNames.includes(form.title.value)) {
+    alert("Please choose a unique title");
+    return
+  }
   const data = form.title.value || title
   let project = Project(data);
+  takenNames.push(project.getTitle());
 
   projects.addProject(project);
   projects.setCurrentProject(project);
@@ -100,6 +111,7 @@ const initialiseEventListeners = () => {
   deleteProjectButton.addEventListener('click', (e) => {
     e.preventDefault();
     const currentProject = projects.getCurrentProject();
+    takenNames = takenNames.filter(name => name != currentProject.getTitle());
     projects.deleteProject(currentProject);
     dom.removeElement(currentProject);
     dom.clearContents("task-list");
