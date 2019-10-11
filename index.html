@@ -45,6 +45,28 @@
         
         
       </form>
+
+      <form id="edit-task-form" class="hidden">
+        <h2>Edit Task</h2>
+        <label for="title">Title:</label><br>
+        <input type="text" name="title" required><br><br>
+        <label for="date">Due Date:</label><br>
+        <input type="date" name="date"><br><br>
+        <label for="description">Description:</label><br>
+        <textarea name="description" rows="5" columns="8"></textarea><br><br>
+        <label for="priority">Priority:</label><br>
+        <select name="priority">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+        <br><br>
+        <input type="hidden" name="oldtitle" value="">
+        <input type="submit" class="accept" id="edit-submit" value="Edit Task">
+        <input type="submit" class="cancel" id="edit-cancel" value="Cancel">
+        
+        
+      </form>
       <div id="task-list">
         
       </div>
